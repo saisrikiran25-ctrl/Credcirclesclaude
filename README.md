@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Circlo: SHG for Gen Z
 
-## Getting Started
+A working, demo-ready prototype of **Community Credit Circles for Students and Young Adults**: small invite-only groups of verified people who pool contributions in a ledger, vote on loans, lend to each other by UPI, and see every rupee. **UPI, eKYC, AutoPay and the NBFC-P2P partner are simulated. No real money moves.** Circlo is a connector and a ledger only; it never holds a wallet.
 
-First, run the development server:
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run seed      # creates circlo.db with 17 users, 5 circles, 11 loans, 131 ledger entries
+npm run dev       # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Other commands: `npm run build` · `npm start` · `npm test` (67 unit and lifecycle tests) · `npm run test:e2e` (Playwright smoke tests; builds nothing, so run `npm run build` first).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Needs Node 20+. Set `CIRCLO_DB` to use a different database file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Demo in 2 minutes
 
-## Learn More
+Open the welcome page and tap a persona (or log in with the phone and any 6-digit code; the demo OTP is `123456`).
 
-To learn more about Next.js, take a look at the following resources:
+| Persona | Phone | What to try |
+|---|---|---|
+| **Ananya**, student borrower | 9876500001 | Vote on Sneha's request; her own instalment is due in ~2 days; set up AutoPay |
+| **Vikram**, circle admin / lender | 9876500002 | Pay his UPI share to Priya; edit rules; switch Compliance Mode; Circle Premium |
+| **Imran**, young pro / outside borrower | 9876500003 | AutoPay loan in another circle; borrow as a vetted outsider |
+| Platform admin | 9876500000 | Same app; Pilot Metrics, Revenue, Projections under Profile |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Use the account menu (top right) to switch persona at any time. Seeded circles show: a closed loan, a restructured loan, an overdue loan with a late penalty, a defaulted loan with lender loss shares, an open vote, and an approved loan awaiting UPI payments.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## What is where
 
-## Deploy on Vercel
+- `app/` Next.js App Router screens (`(public)` welcome, login, signup, explainers, legal; `(app)` the signed-in product)
+- `lib/domain/` pure, unit-tested rules: money, EMI, voting, risk score, exposure, penalties, risk sharing, ledger totals
+- `lib/core/` business operations on the database (create circle, request loan, vote, pay, repay, restructure, default, sweep)
+- `lib/services/` the simulated eKYC, UPI and partner-escrow behind interfaces (swap for real providers)
+- `lib/db/` Drizzle schema, migrations, and the seed (which replays history through the real functions on a fake clock)
+- `tests/` unit and lifecycle tests · `e2e/` Playwright smoke tests
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+See `DECISIONS.md` for why things are built the way they are, and `FEATURE_MAP.md` for how each section of the business description maps to the product.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Honest limits
+
+Prototype only: simulated payments and identity, SQLite storage, placeholder legal text, no real notifications (in-app only), English only (a string hook exists for Hindi and Telugu). Not legal or financial advice. Lending carries risk of loss.

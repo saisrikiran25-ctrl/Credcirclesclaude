@@ -118,3 +118,17 @@ export function unreadCount(db: DbLike, userId: string): number {
 export function userContributionTotal(db: DbLike, userId: string): number {
   return db.select().from(contributions).where(eq(contributions.userId, userId)).all().reduce((a, c) => a + c.amount, 0);
 }
+
+/** UPI payments this user still owes as a lender on approved loans (includes failed attempts to retry). */
+export function pendingPayments(db: DbLike, userId: string) {
+  const rows = db
+    .select({ s: loanLenders, l: loans })
+    .from(loanLenders)
+    .innerJoin(loans, eq(loans.id, loanLenders.loanId))
+    .where(and(eq(loanLenders.lenderId, userId), eq(loans.status, "approved")))
+    .all()
+    .filter((r) => r.s.status !== "paid");
+  const names = new Map(db.select().from(users).all().map((u) => [u.id, u.name]));
+  const cn = new Map(db.select().from(circles).all().map((c) => [c.id, c.name]));
+  return rows.map(({ s, l }) => ({ loan: l, share: s, borrowerName: names.get(l.borrowerId) ?? "Member", circleName: cn.get(l.circleId) ?? "Circle" }));
+}

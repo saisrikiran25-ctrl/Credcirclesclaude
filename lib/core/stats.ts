@@ -4,6 +4,7 @@ import { annualisedYieldPct, ledgerTotals, type LedgerLike, type LedgerTotals } 
 import { splitProportionally } from "@/lib/domain/money";
 import { computeRiskScore, type RiskResult } from "@/lib/domain/risk";
 import { instalmentStatus } from "@/lib/domain/emi";
+import { diversificationNudges } from "@/lib/domain/exposure";
 import { activeMemberIds, getUser, type DbLike } from "./shared";
 
 const { ledgerEntries, loans, instalments, loanLenders, repayments, contributions, users } = schema;
@@ -193,4 +194,18 @@ export function portfolioSeries(db: DbLike, circleId: string, now: Date, points 
 
 export function recentLedger(db: DbLike, circleId: string, limit = 50) {
   return db.select().from(ledgerEntries).where(eq(ledgerEntries.circleId, circleId)).orderBy(desc(ledgerEntries.createdAt)).limit(limit).all();
+}
+
+/** Diversification nudges for a circle (concentration, thin liquidity), from live ledger data. */
+export function circleNudges(db: DbLike, circleId: string, now: Date) {
+  const circle = db.select().from(schema.circles).where(eq(schema.circles.id, circleId)).get();
+  if (!circle) return [];
+  const stats = circleStats(db, circleId, now);
+  const committed = db.select().from(loans).where(and(eq(loans.circleId, circleId), eq(loans.status, "approved"))).all().reduce((a, l) => a + l.amount, 0);
+  return diversificationNudges({
+    pool: stats.totals.pool + stats.totals.outstanding,
+    available: stats.totals.pool - committed,
+    circleMaxLoan: circle.maxLoan,
+    outstandingByBorrower: stats.exposureByBorrower,
+  });
 }
