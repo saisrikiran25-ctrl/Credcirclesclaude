@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
 
+// Cache Components / partial prefetching are intentionally OFF: Circlo is a fully
+// dynamic, session-and-database-backed app (see DECISIONS.md).
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
   turbopack: {
     rules: {
       "*.css": {
