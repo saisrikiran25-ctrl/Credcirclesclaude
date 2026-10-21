@@ -26,7 +26,12 @@ export interface RiskResult {
   band: RiskBand | null;
   insufficientHistory: boolean;
   factors: RiskFactor[];
+  /** Set when a rule overrides the additive score (shown to the user, never hidden). */
+  cap: { limit: number; reason: string } | null;
 }
+
+/** A default on record limits the score, so one good factor cannot mask a lender loss. */
+export const DEFAULT_SCORE_CAP = 49;
 
 export const RISK_WEIGHTS = { repayment: 35, tenure: 15, approval: 15, exposure: 20, verification: 15 } as const;
 
@@ -46,6 +51,7 @@ const r1 = (n: number) => Math.round(n * 10) / 10;
  *  Circle approval    15  share of past requests the circle approved (neutral with none)
  *  Exposure           20  outstanding vs contributed: full marks at 0x, zero at 2x or more
  *  Verification       15  eKYC verified
+ *  Cap                    any default on record limits the score to 49 (High risk)
  *
  * "Not enough history" = no repayment record at all and under 30 days on the platform.
  */
@@ -103,8 +109,13 @@ export function computeRiskScore(i: RiskInput): RiskResult {
   ];
 
   const insufficientHistory = noRecord && i.tenureDays < 30;
-  if (insufficientHistory) return { score: null, band: null, insufficientHistory: true, factors };
+  if (insufficientHistory) return { score: null, band: null, insufficientHistory: true, factors, cap: null };
 
-  const score = Math.round(factors.reduce((a, f) => a + f.points, 0));
-  return { score, band: bandFor(score), insufficientHistory: false, factors };
+  let score = Math.round(factors.reduce((a, f) => a + f.points, 0));
+  let cap: RiskResult["cap"] = null;
+  if (i.defaults > 0 && score > DEFAULT_SCORE_CAP) {
+    score = DEFAULT_SCORE_CAP;
+    cap = { limit: DEFAULT_SCORE_CAP, reason: "A default on record limits the score to High risk until it is resolved." };
+  }
+  return { score, band: bandFor(score), insufficientHistory: false, factors, cap };
 }

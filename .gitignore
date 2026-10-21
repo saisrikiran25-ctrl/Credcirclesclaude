@@ -4,3 +4,4 @@ circlo.db*
 *.tsbuildinfo
 test-results
 playwright-report
+.scratch

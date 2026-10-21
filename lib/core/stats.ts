@@ -80,19 +80,23 @@ export function riskForUser(db: DbLike, userId: string, now: Date): RiskResult {
   const user = getUser(db, userId);
   const myLoans = db.select().from(loans).where(eq(loans.borrowerId, userId)).all();
   const loanIds = myLoans.map((l) => l.id);
-  const insts = loanIds.length
-    ? db.select().from(instalments).where(and(inArray(instalments.loanId, loanIds), eq(instalments.state, "active"))).all()
-    : [];
+  const insts = loanIds.length ? db.select().from(instalments).where(inArray(instalments.loanId, loanIds)).all() : [];
   let onTime = 0;
   let late = 0;
   let outstanding = 0;
   for (const i of insts) {
+    if (i.state === "superseded") {
+      // A restructure replaces a missed instalment, but the miss stays on the record.
+      if (i.penaltyChargedAt && !i.paidAt) late += 1;
+      continue;
+    }
     if (i.paidAt) {
       if (i.paidAt.getTime() <= onTimeCutoff(i.dueDate)) onTime += 1;
       else late += 1;
     } else if (now.getTime() >= onTimeCutoff(i.dueDate)) late += 1;
   }
-  for (const l of myLoans) if (l.status === "repaying") outstanding += loanOutstanding(db, l.id);
+  // Money still owed counts as outstanding, including a defaulted loan that was written off for lenders.
+  for (const l of myLoans) if (l.status === "repaying" || l.status === "defaulted") outstanding += loanOutstanding(db, l.id);
   const decided = myLoans.filter((l) => l.status !== "voting");
   const approvalRatio = decided.length === 0 ? null : decided.filter((l) => l.status !== "rejected").length / decided.length;
   const totalContributed = db.select().from(contributions).where(eq(contributions.userId, userId)).all().reduce((a, c) => a + c.amount, 0);
@@ -130,17 +134,23 @@ export function circleStats(db: DbLike, circleId: string, now: Date): CircleStat
   let late = 0;
   const byBorrower = new Map<string, number>();
   for (const l of circleLoans.filter((x) => ["repaying", "closed", "defaulted"].includes(x.status))) {
-    const insts = db.select().from(instalments).where(and(eq(instalments.loanId, l.id), eq(instalments.state, "active"))).all();
+    const insts = db.select().from(instalments).where(eq(instalments.loanId, l.id)).all();
     for (const i of insts) {
+      if (i.state === "superseded") {
+        if (i.penaltyChargedAt && !i.paidAt) late += 1; // a missed instalment stays on the record
+        continue;
+      }
       if (i.paidAt) {
         if (i.paidAt.getTime() <= onTimeCutoff(i.dueDate)) onTime += 1; else late += 1;
-      } else if (l.status === "repaying") {
-        if (instalmentStatus(i.dueDate, now, false) === "overdue") {
-          overdueAmount += i.principal + i.interest + i.penalty;
-          overdueCount += 1;
-          late += 1;
+      } else {
+        if (now.getTime() >= onTimeCutoff(i.dueDate)) late += 1;
+        if (l.status === "repaying") {
+          if (instalmentStatus(i.dueDate, now, false) === "overdue") {
+            overdueAmount += i.principal + i.interest + i.penalty;
+            overdueCount += 1;
+          }
+          byBorrower.set(l.borrowerId, (byBorrower.get(l.borrowerId) ?? 0) + i.principal);
         }
-        byBorrower.set(l.borrowerId, (byBorrower.get(l.borrowerId) ?? 0) + i.principal);
       }
     }
   }

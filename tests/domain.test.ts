@@ -189,6 +189,7 @@ describe("risk score", () => {
   });
   it("shows explainable factors that add up to the score", () => {
     const r = computeRiskScore({ ...base, lateInstalments: 2, tenureDays: 90, outstanding: rupees(4000) });
+    expect(r.cap).toBeNull();
     expect(r.factors).toHaveLength(5);
     expect(Math.round(r.factors.reduce((a, f) => a + f.points, 0))).toBe(r.score);
     expect(r.factors.every((f) => f.detail.length > 0)).toBe(true);
@@ -196,6 +197,14 @@ describe("risk score", () => {
   it("a default drops the band", () => {
     const r = computeRiskScore({ ...base, onTimeInstalments: 1, lateInstalments: 2, defaults: 1, approvalRatio: 0.5, outstanding: rupees(9000) });
     expect(r.band).toBe("high");
+  });
+  it("a default on record caps the score at 49 and says so", () => {
+    const r = computeRiskScore({ ...base, defaults: 1 });
+    expect(r.score).toBe(49);
+    expect(r.band).toBe("high");
+    expect(r.cap?.limit).toBe(49);
+    expect(r.cap?.reason).toMatch(/default/i);
+    expect(computeRiskScore(base).cap).toBeNull();
   });
   it("is 'not enough history' for a brand-new member", () => {
     const r = computeRiskScore({ ...base, onTimeInstalments: 0, tenureDays: 5, approvalRatio: null, totalContributed: 0 });
