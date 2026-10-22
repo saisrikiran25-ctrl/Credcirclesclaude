@@ -27,6 +27,12 @@ Open the welcome page and tap a persona (or log in with the phone and any 6-digi
 
 Use the account menu (top right) to switch persona at any time. Seeded circles show: a closed loan, a restructured loan, an overdue loan with a late penalty, a defaulted loan with lender loss shares, an open vote, and an approved loan awaiting UPI payments.
 
+## Deploy on Vercel (demo)
+
+Import the GitHub repo in Vercel. `vercel.json` already sets the build to `npm run seed && npm run build`, so the demo database is created at build time and bundled with the app. Optional: set `CIRCLO_SECRET` to any long random string (signs login cookies and the signup KYC token).
+
+Vercel's disk is read-only and temporary, so the app copies the seeded database to `/tmp`. Changes people make on the live site are kept only while that server instance stays warm and reset when it recycles, and different instances can show different changes. That is fine for a demo; for real use, move the database to a hosted one (for example Turso or Postgres) or host on a service with a persistent disk.
+
 ## What is where
 
 - `app/` Next.js App Router screens (`(public)` welcome, login, signup, explainers, legal; `(app)` the signed-in product)

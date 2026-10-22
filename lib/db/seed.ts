@@ -39,7 +39,7 @@ interface Ev { t: Date; run: () => Promise<void> | void }
 async function main() {
   const file = process.env.CIRCLO_DB ?? path.join(process.cwd(), "circlo.db");
   for (const f of [file, `${file}-wal`, `${file}-shm`]) if (fs.existsSync(f)) fs.rmSync(f);
-  const { db } = openDb(file);
+  const { db, raw } = openDb(file);
 
   // ---------- people ----------
   type P = { key: string; name: string; phone: string; city: string; segment: string; institution?: string; ageDays: number; vetted?: boolean; persona?: string; admin?: boolean };
@@ -239,6 +239,7 @@ async function main() {
   void closeVote; void (null as unknown as Db);
 
   const n = (t: unknown) => (db as unknown as { $client: { prepare: (s: string) => { get: () => { c: number } } } }).$client.prepare(`select count(*) c from ${t}`).get().c;
+  raw.pragma("wal_checkpoint(TRUNCATE)"); // fold the WAL into the main file so the .db can be copied as-is
   console.log(`Seeded: ${n("users")} users, ${n("circles")} circles, ${n("loans")} loans, ${n("ledger_entries")} ledger entries.`);
   console.log("Demo logins (any 6-digit OTP, demo code 123456): Student 9876500001 · Admin/Lender 9876500002 · Young pro 9876500003");
 }

@@ -42,3 +42,7 @@ Repayment 35 · time on platform 15 · past approvals 15 · current exposure 20 
 
 ## Seed data
 "Time machine": history is replayed through the real core functions with a fake clock and a daily sweep, so the seeded ledger, penalties and risk scores are produced by the same code that runs live, not hand-written rows.
+
+## Hosting on Vercel
+- **Stateless signed login cookie** (`<userId>.<HMAC>`) replaces the sessions table, so a login keeps working across several serverless instances.
+- **Database seeded at build time** and copied to `/tmp` on first use on Vercel. Runtime changes are per instance and temporary. A hosted database is the real fix.
