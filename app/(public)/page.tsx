@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight, Banknote, Check, Landmark, ShieldCheck, Users, Vote, X } from "lucide-react";
+import { ArrowRight, Banknote, Landmark, ShieldCheck, Users, Vote } from "lucide-react";
 import { getCtx } from "@/lib/session";
 import { APP_NAME, APP_ONE_LINER, APP_TAGLINE } from "@/lib/config";
-import { Avatar, LinkButton, Sparkline, Wordmark } from "@/components/ui";
+import { Avatar, LinkButton, Wordmark } from "@/components/ui";
 import { PersonaButtons } from "@/components/client/persona-buttons";
 import { ProtoRibbon } from "@/components/proto-ribbon";
 import { RISK_DISCLOSURE } from "@/lib/domain/constants";
@@ -18,7 +18,7 @@ const STATS = [
 /* Sample activity for the ticker. Clearly labelled as sample data in the UI. */
 const TICKER = [
   "🔥 Ananya repaid ₹2,066 on time",
-  "🗳️ Vote passed: ₹5,000 for gadgets, 4 of 5 said yes",
+  "✅ Loan approved by the circle: ₹5,000 for gadgets",
   "🏠 New circle: Hostel Block C just started",
   "💸 Vikram lent ₹1,500 over UPI",
   "✅ Kavya finished eKYC",
@@ -26,8 +26,6 @@ const TICKER = [
   "🎉 Imran closed a loan, 0 days late",
   "🤝 Meera joined Gachibowli Hostel Gang",
 ];
-
-const LEDGER_CURVE = [10, 12, 11, 15, 14, 19, 18, 24, 23, 29, 31, 38];
 
 export default async function Welcome() {
   const { user } = await getCtx();
@@ -94,31 +92,6 @@ export default async function Welcome() {
               <li key={s.l} className="lift rounded-2xl border border-line bg-surface p-4"><div className="text-xl" aria-hidden="true">{s.e}</div><div className="num font-display mt-1 text-3xl font-bold tracking-tight">{s.v}</div><div className="text-xs text-muted">{s.l}</div></li>
             ))}
           </ul>
-
-          <section className="mt-16 grid items-center gap-10 lg:grid-cols-2" aria-labelledby="vote">
-            <div>
-              <p className="text-sm font-semibold text-accent">Loans, but your friends decide</p>
-              <h2 id="vote" className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Every loan is a live vote.</h2>
-              <p className="mt-3 max-w-md text-muted">A request goes to the circle. Members see the amount, the purpose and the borrower&apos;s track record, then vote. At 70% yes it goes ahead and lenders pay by UPI. No black box.</p>
-              <ul className="mt-5 space-y-2.5 text-sm">
-                {["See who voted and what is still needed", "A risk score for every request, with the reasons", "Lenders share any loss fairly, never silently"].map((t) => <li key={t} className="flex items-start gap-2.5"><span className="mt-0.5 flex size-5 items-center justify-center rounded-full bg-possoft text-pos"><Check size={13} aria-hidden="true" /></span>{t}</li>)}
-              </ul>
-            </div>
-            <div className="relative mx-auto w-full max-w-md" aria-hidden="true">
-              <div className="rounded-3xl border border-line bg-surface p-5 shadow-[0_24px_60px_-28px_rgba(20,24,40,0.4)]">
-                <div className="flex items-center gap-3"><Avatar name="Sneha Iyer" size={40} /><div className="min-w-0 flex-1"><div className="font-display font-semibold">Will the circle fund Sneha?</div><div className="text-xs text-muted">₹5,000 · Gadgets · 3 months · 10% a year</div></div><span className="rounded-full bg-warnsoft px-2.5 py-1 text-[11px] font-semibold text-warn">21h left</span></div>
-                <div className="mt-5 flex items-end justify-between"><div><div className="num font-display text-4xl font-bold text-pos">78%</div><div className="text-xs text-muted">say yes, 70% needed</div></div><div className="text-right text-xs text-muted">4 of 5 voted<br />Risk 82/100 · Low</div></div>
-                <div className="relative mt-3 h-3 overflow-hidden rounded-full bg-negsoft"><div className="fill-bar h-full rounded-full bg-gradient-to-r from-[#00b386] to-[#2fd4a0]" style={{ width: "78%" }} /><span className="absolute inset-y-0 w-0.5 bg-fg/60" style={{ left: "70%" }} /></div>
-                <div className="mt-5 grid grid-cols-2 gap-3">
-                  <span className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-possoft font-semibold text-pos"><Check size={18} /> Yes</span>
-                  <span className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-negsoft font-semibold text-neg"><X size={18} /> Pass</span>
-                </div>
-              </div>
-              <div className="floaty absolute -right-3 -top-5 hidden rounded-2xl border border-line bg-surface p-3 shadow-lg sm:block" style={{ ["--r" as string]: "4deg" }}>
-                <div className="text-[11px] text-muted">Circle capital</div><div className="num font-display text-lg font-bold">₹38,741</div><Sparkline values={LEDGER_CURVE} width={92} height={28} up />
-              </div>
-            </div>
-          </section>
 
           <h2 className="mt-16 text-3xl font-bold tracking-tight sm:text-4xl">Four steps. Zero bank queues.</h2>
           <ol className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

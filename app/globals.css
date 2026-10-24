@@ -223,7 +223,3 @@ h1, h2, h3, .font-display {
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .marquee { display: flex; width: max-content; animation: marquee 38s linear infinite; }
 .marquee:hover { animation-play-state: paused; }
-@keyframes floaty { 0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); } 50% { transform: translateY(-8px) rotate(var(--r, 0deg)); } }
-.floaty { animation: floaty 6s ease-in-out infinite; }
-@keyframes fill-bar { from { width: 0; } }
-.fill-bar { animation: fill-bar 1.1s cubic-bezier(.2,.8,.2,1) both; }
