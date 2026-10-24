@@ -4,6 +4,7 @@ import { requireCtx } from "@/lib/session";
 import { myCircles, myPosition, pendingPayments, pendingVotes } from "@/lib/core/position";
 import { circleNudges, circleStats, portfolioSeries } from "@/lib/core/stats";
 import { formatINR } from "@/lib/domain/money";
+import { circleEmoji } from "@/lib/utils";
 import { Badge, Card, Delta, EmptyState, LinkButton, Notice, SectionTitle, SeeAll, Sparkline } from "@/components/ui";
 import { CountUp } from "@/components/client/ring";
 import { purposeLabel } from "@/components/loan-bits";
@@ -17,10 +18,10 @@ const greeting = (now: Date) => {
 };
 
 const SHORTCUTS = [
-  { href: "/contribute", icon: PiggyBank, label: "Contribute" },
-  { href: "/loans/new", icon: HandCoins, label: "Request loan" },
-  { href: "/circles/new", icon: Plus, label: "New circle" },
-  { href: "/join", icon: KeyRound, label: "Join" },
+  { href: "/contribute", icon: PiggyBank, label: "Contribute", g: "from-[#00b386] to-[#0a8f7a]" },
+  { href: "/loans/new", icon: HandCoins, label: "Request loan", g: "from-[#4a5af0] to-[#7c5cff]" },
+  { href: "/circles/new", icon: Plus, label: "New circle", g: "from-[#ff5fa2] to-[#ff8a4c]" },
+  { href: "/join", icon: KeyRound, label: "Join", g: "from-[#ffb020] to-[#ff7a1a]" },
 ];
 
 const EXPLORE = [
@@ -76,9 +77,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ w
         const capital = s.totals.pool + s.totals.outstanding;
         return (
           <Link key={c.id} href={`/circles/${c.id}`} className="flex min-h-16 items-center gap-3 px-4 py-3 transition hover:bg-surface2">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brandsoft text-sm font-bold text-brand" aria-hidden="true">{c.name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase()}</span>
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-surface2 text-xl" aria-hidden="true">{circleEmoji(c.name)}</span>
             <div className="min-w-0 flex-1">
-              <div className="truncate font-medium">{c.name}</div>
+              <div className="line-clamp-2 font-medium leading-tight">{c.name}</div>
               <div className="truncate text-xs text-muted">{c.memberCount} members · {c.role === "admin" ? "You admin" : c.city}</div>
             </div>
             <Sparkline width={52} values={series} up={s.overdueCount === 0} />
@@ -95,34 +96,34 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ w
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="min-w-0">
-        <h1 className="mb-3 text-xl font-semibold tracking-tight md:text-2xl">{greeting(now)}, {user.name.split(" ")[0]}</h1>
+        <h1 className="mb-3 text-2xl font-bold tracking-tight md:text-3xl">{greeting(now)}, {user.name.split(" ")[0]} <span aria-hidden="true">👋</span></h1>
         {sp.welcome && <Notice tone="pos" title="You are verified and in." className="mb-4">Create a circle or ask a friend for an invite code to join one.</Notice>}
 
-        <Card>
+        <Card className="grad-hero glow relative overflow-hidden !border-0 md:p-6">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-sm font-medium text-muted">My position</h2>
+              <h2 className="text-sm font-medium text-white">My position 💫</h2>
               <div className="mt-1 text-3xl font-semibold tracking-tight md:text-4xl">
                 {pos.net < 0 && "-"}<CountUp value={Math.abs(pos.net)} />
               </div>
               <div className="mt-1 flex items-center gap-2 text-sm">
-                <span className="text-muted">Earnings</span><Delta paise={pos.earnings} />
+                <span className="text-white">Earnings</span><span className="rounded-full bg-white px-2 py-0.5"><Delta paise={pos.earnings} /></span>
               </div>
             </div>
-            <Link href="/position" className="inline-flex min-h-11 items-center gap-0.5 text-sm font-semibold text-brand md:min-h-8">Details <ChevronRight size={16} aria-hidden="true" /></Link>
+            <Link href="/position" className="inline-flex min-h-11 items-center gap-0.5 rounded-full bg-white/20 px-3 text-sm font-semibold text-white hover:bg-white/30 md:min-h-8">Details <ChevronRight size={16} aria-hidden="true" /></Link>
           </div>
-          <dl className="mt-4 grid grid-cols-2 divide-x divide-line rounded-xl bg-surface2 text-sm">
-            <div className="p-3"><dt className="text-xs text-muted">Lent out</dt><dd className="num mt-0.5 text-base font-semibold">{formatINR(pos.lentOutstanding)}</dd></div>
-            <div className="p-3 pl-4"><dt className="text-xs text-muted">Borrowed</dt><dd className="num mt-0.5 text-base font-semibold">{formatINR(pos.borrowedOutstanding)}</dd></div>
+          <dl className="mt-4 grid grid-cols-2 divide-x divide-white/25 rounded-xl bg-white/15 text-sm text-white">
+            <div className="p-3"><dt className="text-xs text-white">Lent out</dt><dd className="num mt-0.5 text-base font-semibold">{formatINR(pos.lentOutstanding)}</dd></div>
+            <div className="p-3 pl-4"><dt className="text-xs text-white">Borrowed</dt><dd className="num mt-0.5 text-base font-semibold">{formatINR(pos.borrowedOutstanding)}</dd></div>
           </dl>
-          <p className="mt-2 text-xs text-muted">Net = lent out minus borrowed. Your money stays in your bank account.</p>
+          <p className="mt-2 text-xs text-white">Net = lent out minus borrowed. Your money stays in your bank account.</p>
         </Card>
 
         <ul className="mt-4 grid grid-cols-4 gap-2">
-          {SHORTCUTS.map(({ href, icon: Icon, label }) => (
+          {SHORTCUTS.map(({ href, icon: Icon, label, g }) => (
             <li key={href}>
-              <Link href={href} className="flex min-h-[84px] flex-col items-center justify-center gap-2 rounded-xl border border-line bg-surface px-1 py-3 text-center text-xs font-medium transition hover:bg-surface2 active:scale-[0.98] md:flex-row md:justify-start md:gap-2.5 md:px-3 md:text-sm">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brandsoft text-brand"><Icon size={20} aria-hidden="true" /></span>
+              <Link href={href} className="lift flex min-h-[84px] flex-col items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-1 py-3 text-center text-xs font-medium transition hover:bg-surface2 active:scale-[0.98] md:flex-row md:justify-start md:gap-2.5 md:px-3 md:text-sm">
+                <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${g} text-white`}><Icon size={20} aria-hidden="true" /></span>
                 {label}
               </Link>
             </li>

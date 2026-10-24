@@ -44,3 +44,11 @@ export function timeLeft(to: Date | number, now: number): string {
 
 /** "About N months" helper for restructure hints. */
 export const addMonthsLabel = (n: number) => (Number.isFinite(n) && n >= 1 ? `Roughly ${n} monthly instalment${n === 1 ? "" : "s"} from the next due date.` : "Choose 1 to 12 months.");
+
+const CIRCLE_EMOJI = ["🏠", "🎓", "🚀", "🎮", "🍕", "🎧", "🏏", "🧠", "☕", "🛵", "🎨", "🌴"];
+/** A stable emoji per circle, so lists feel like a Gen Z group chat rather than a bank statement. */
+export function circleEmoji(name: string): string {
+  let h = 7;
+  for (const c of name) h = (h * 33 + c.charCodeAt(0)) >>> 0;
+  return CIRCLE_EMOJI[h % CIRCLE_EMOJI.length];
+}

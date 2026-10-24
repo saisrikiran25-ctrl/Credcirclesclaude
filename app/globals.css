@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@fontsource-variable/inter";
+@import "@fontsource-variable/space-grotesk";
 
 /* Dark mode: explicit toggle (data-theme) wins; otherwise follow the OS. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
@@ -105,12 +106,12 @@
   --color-neg: var(--neg);
   --color-negsoft: var(--neg-soft);
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-  /* Tighter, flatter corners than before: 12px cards, 10px controls */
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.625rem;
-  --radius-2xl: 0.75rem;
-  --radius-3xl: 0.875rem;
+  --font-display: "Space Grotesk Variable", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  /* Rounder, friendlier corners: 18px cards, 14px controls */
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.125rem;
+  --radius-3xl: 1.5rem;
 }
 
 html {
@@ -139,7 +140,7 @@ input, select, textarea { font-size: 16px; }
   input, select, textarea { font-size: 14px; }
 }
 
-.font-display {
+h1, h2, h3, .font-display {
   font-family: var(--font-display);
   letter-spacing: -0.015em;
 }
@@ -194,3 +195,35 @@ input, select, textarea { font-size: 16px; }
   .no-print { display: none !important; }
   .print-page { box-shadow: none !important; border: none !important; }
 }
+
+/* ---------- Gen Z layer: gradients, glow, motion ---------- */
+:root { --violet: #7c5cff; --pink: #ff5fa2; --amber: #ffb020; --glow: rgba(0, 179, 134, 0.35); }
+:root[data-theme="dark"] { --glow: rgba(34, 199, 154, 0.28); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --glow: rgba(34, 199, 154, 0.28); } }
+
+/* Hero gradient used on the position card and CTA surfaces. White text on it passes AA. */
+.grad-hero {
+  background:
+    radial-gradient(120% 120% at 100% 0%, rgba(124, 92, 255, 0.55) 0%, rgba(124, 92, 255, 0) 55%),
+    radial-gradient(90% 100% at 0% 100%, rgba(255, 95, 162, 0.28) 0%, rgba(255, 95, 162, 0) 60%),
+    linear-gradient(135deg, #006b4d 0%, #00855f 55%, #0a6f5e 100%);
+  color: #fff;
+}
+.grad-brand { background: linear-gradient(135deg, #00a77f 0%, #00875f 100%); }
+.grad-text { background: linear-gradient(90deg, var(--brand), var(--violet) 70%, var(--pink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.glow { box-shadow: 0 10px 30px -10px var(--glow); }
+.lift { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.lift:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -14px rgba(20, 24, 40, 0.28); }
+.bg-mesh {
+  background:
+    radial-gradient(50% 60% at 85% 10%, rgba(124, 92, 255, 0.18) 0%, transparent 70%),
+    radial-gradient(45% 55% at 10% 0%, rgba(0, 179, 134, 0.18) 0%, transparent 70%),
+    radial-gradient(40% 50% at 60% 100%, rgba(255, 95, 162, 0.12) 0%, transparent 70%);
+}
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.marquee { display: flex; width: max-content; animation: marquee 38s linear infinite; }
+.marquee:hover { animation-play-state: paused; }
+@keyframes floaty { 0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); } 50% { transform: translateY(-8px) rotate(var(--r, 0deg)); } }
+.floaty { animation: floaty 6s ease-in-out infinite; }
+@keyframes fill-bar { from { width: 0; } }
+.fill-bar { animation: fill-bar 1.1s cubic-bezier(.2,.8,.2,1) both; }

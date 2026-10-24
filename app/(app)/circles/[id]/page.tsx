@@ -12,6 +12,7 @@ import { displayStatus } from "@/lib/core/loans";
 import { formatINR } from "@/lib/domain/money";
 import { RISK_DISCLOSURE } from "@/lib/domain/constants";
 import { instalmentStatus } from "@/lib/domain/emi";
+import { circleEmoji } from "@/lib/utils";
 import { Avatar, Badge, Card, Delta, KeyValue, LinkButton, Notice, PageHeader, RiskBadge, SectionTitle, StatTile, Tabs } from "@/components/ui";
 import { RingGauge } from "@/components/client/ring";
 import { PerformanceChart } from "@/components/charts/performance-chart";
@@ -72,7 +73,7 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
 
   return (
     <div>
-      <PageHeader back="/circles" title={circle.name} subtitle={`${circle.city} · ${memberIds.length} members${circle.description ? ` · ${circle.description}` : ""}`}
+      <PageHeader back="/circles" title={<><span aria-hidden="true">{circleEmoji(circle.name)}</span> {circle.name}</>} subtitle={`${circle.city} · ${memberIds.length} members${circle.description ? ` · ${circle.description}` : ""}`}
         action={<div className="flex flex-wrap justify-end gap-1.5">{isAdmin && <Badge tone="brand"><Crown size={12} aria-hidden="true" /> Admin</Badge>}<Badge tone={circle.complianceMode === "A" ? "neutral" : "warn"}>{circle.complianceMode === "A" ? "Partnered" : "Closed"}</Badge></div>} />
       {sp.created && <Notice tone="pos" title="Circle created" className="mb-4">Share the invite code below with people you trust. They must be verified to join.</Notice>}
 

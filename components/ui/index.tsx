@@ -182,7 +182,7 @@ export function PageHeader({ title, subtitle, back, action }: { title: ReactNode
       )}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-xl font-semibold leading-tight tracking-tight md:text-2xl">{title}</h1>
+          <h1 className="text-2xl font-bold leading-tight tracking-tight md:text-3xl">{title}</h1>
           {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
         </div>
         {action}
@@ -226,7 +226,7 @@ export function Notice({ tone = "info", title, children, className }: { tone?: k
 /* ---------- buttons ---------- */
 
 const BTN = {
-  primary: "bg-brand text-onbrand hover:brightness-95",
+  primary: "grad-brand text-white shadow-[0_6px_16px_-6px_var(--glow)] hover:brightness-110",
   accent: "bg-accent text-onaccent hover:brightness-95",
   soft: "bg-brandsoft text-brand hover:brightness-95",
   ghost: "border border-line bg-surface text-fg hover:bg-surface2",
@@ -258,10 +258,11 @@ export function LogoMark({ size = 32 }: { size?: number }) {
   });
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" role="img" aria-label="Circlo logo">
-      <rect width="100" height="100" rx="24" fill="var(--brand)" />
-      <circle cx="50" cy="50" r="28" fill="none" stroke="var(--onbrand)" strokeOpacity="0.35" strokeWidth="3" />
-      {dots.map((d, i) => <circle key={i} cx={d.x} cy={d.y} r={i === 0 ? 8 : 6} fill="var(--onbrand)" />)}
-      <circle cx="50" cy="50" r="10" fill="var(--onbrand)" />
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#00b386" /><stop offset="1" stopColor="#7c5cff" /></linearGradient></defs>
+      <rect width="100" height="100" rx="28" fill="url(#lg)" />
+      <circle cx="50" cy="50" r="28" fill="none" stroke="#fff" strokeOpacity="0.35" strokeWidth="3" />
+      {dots.map((d, i) => <circle key={i} cx={d.x} cy={d.y} r={i === 0 ? 8 : 6} fill="#fff" />)}
+      <circle cx="50" cy="50" r="10" fill="#fff" />
     </svg>
   );
 }
@@ -270,7 +271,7 @@ export function Wordmark({ name, size = 32 }: { name: string; size?: number }) {
   return (
     <span className="inline-flex items-center gap-2">
       <LogoMark size={size} />
-      <span className="text-lg font-bold tracking-tight">{name}</span>
+      <span className="font-display text-xl font-bold tracking-tight">{name}</span>
     </span>
   );
 }
