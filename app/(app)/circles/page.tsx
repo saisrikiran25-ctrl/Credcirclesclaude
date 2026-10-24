@@ -4,8 +4,7 @@ import { requireCtx } from "@/lib/session";
 import { myCircles } from "@/lib/core/position";
 import { circleStats, portfolioSeries } from "@/lib/core/stats";
 import { formatINR } from "@/lib/domain/money";
-import { circleEmoji } from "@/lib/utils";
-import { Badge, Card, EmptyState, LinkButton, PageHeader, Sparkline } from "@/components/ui";
+import { Badge, CircleIcon, Card, EmptyState, LinkButton, PageHeader, Sparkline } from "@/components/ui";
 
 export const metadata = { title: "Circles" };
 
@@ -30,7 +29,7 @@ export default async function CirclesPage() {
                 <li key={c.id}>
                   <Link href={`/circles/${c.id}`} className="grid min-h-16 grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 px-4 py-3 transition hover:bg-surface2 md:grid-cols-[2.2fr_1fr_1fr_1fr_1fr_80px] md:py-2.5">
                     <div className="flex min-w-0 items-center gap-3">
-                      <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-surface2 text-xl" aria-hidden="true">{circleEmoji(c.name)}</span>
+                      <CircleIcon name={c.name} />
                       <div className="min-w-0">
                         <div className="truncate font-medium">{c.name}</div>
                         <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted">{c.city}

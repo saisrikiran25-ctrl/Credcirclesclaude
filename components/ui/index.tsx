@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ChevronLeft, ChevronRight, Info, TriangleAlert, CircleCheck, ShieldAlert } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info, TriangleAlert, CircleCheck, ShieldAlert, House, GraduationCap, Rocket, Gamepad2, Utensils, Headphones, Trophy, Brain, Coffee, Bike, Palette, TreePalm } from "lucide-react";
 import { avatarColors, cn, initials } from "@/lib/utils";
 import { formatINR } from "@/lib/domain/money";
 
@@ -249,6 +249,22 @@ export function LinkButton({ href, children, variant = "primary", size = "md", f
   );
 }
 
+/* ---------- circle identity ---------- */
+
+const CIRCLE_ICONS = [House, GraduationCap, Rocket, Gamepad2, Utensils, Headphones, Trophy, Brain, Coffee, Bike, Palette, TreePalm];
+/** A stable line icon per circle, on a tinted tile, like a fund logo in an investing app. */
+export function CircleIcon({ name, size = 44, className }: { name: string; size?: number; className?: string }) {
+  let h = 7;
+  for (const c of name) h = (h * 33 + c.charCodeAt(0)) >>> 0;
+  const Icon = CIRCLE_ICONS[h % CIRCLE_ICONS.length];
+  const { bg, fg } = avatarColors(name);
+  return (
+    <span aria-hidden="true" className={cn("flex shrink-0 items-center justify-center rounded-xl", className)} style={{ width: size, height: size, background: bg, color: fg }}>
+      <Icon size={Math.round(size * 0.5)} strokeWidth={1.9} />
+    </span>
+  );
+}
+
 /* ---------- brand ---------- */
 
 export function LogoMark({ size = 32 }: { size?: number }) {
@@ -258,7 +274,7 @@ export function LogoMark({ size = 32 }: { size?: number }) {
   });
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" role="img" aria-label="Circlo logo">
-      <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#00b386" /><stop offset="1" stopColor="#7c5cff" /></linearGradient></defs>
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#00b386" /><stop offset="1" stopColor="#0a6f8f" /></linearGradient></defs>
       <rect width="100" height="100" rx="28" fill="url(#lg)" />
       <circle cx="50" cy="50" r="28" fill="none" stroke="#fff" strokeOpacity="0.35" strokeWidth="3" />
       {dots.map((d, i) => <circle key={i} cx={d.x} cy={d.y} r={i === 0 ? 8 : 6} fill="#fff" />)}

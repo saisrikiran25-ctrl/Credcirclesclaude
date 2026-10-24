@@ -4,8 +4,7 @@ import { requireCtx } from "@/lib/session";
 import { myCircles, myPosition, pendingPayments, pendingVotes } from "@/lib/core/position";
 import { circleNudges, circleStats, portfolioSeries } from "@/lib/core/stats";
 import { formatINR } from "@/lib/domain/money";
-import { circleEmoji } from "@/lib/utils";
-import { Badge, Card, Delta, EmptyState, LinkButton, Notice, SectionTitle, SeeAll, Sparkline } from "@/components/ui";
+import { Badge, CircleIcon, Card, Delta, EmptyState, LinkButton, Notice, SectionTitle, SeeAll, Sparkline } from "@/components/ui";
 import { CountUp } from "@/components/client/ring";
 import { purposeLabel } from "@/components/loan-bits";
 import { fmtDay, timeLeft } from "@/lib/utils";
@@ -18,10 +17,10 @@ const greeting = (now: Date) => {
 };
 
 const SHORTCUTS = [
-  { href: "/contribute", icon: PiggyBank, label: "Contribute", g: "from-[#00b386] to-[#0a8f7a]" },
-  { href: "/loans/new", icon: HandCoins, label: "Request loan", g: "from-[#4a5af0] to-[#7c5cff]" },
-  { href: "/circles/new", icon: Plus, label: "New circle", g: "from-[#ff5fa2] to-[#ff8a4c]" },
-  { href: "/join", icon: KeyRound, label: "Join", g: "from-[#ffb020] to-[#ff7a1a]" },
+  { href: "/contribute", icon: PiggyBank, label: "Contribute", g: "bg-brandsoft text-brand" },
+  { href: "/loans/new", icon: HandCoins, label: "Request loan", g: "bg-accentsoft text-accent" },
+  { href: "/circles/new", icon: Plus, label: "New circle", g: "bg-accentsoft text-accent" },
+  { href: "/join", icon: KeyRound, label: "Join", g: "bg-brandsoft text-brand" },
 ];
 
 const EXPLORE = [
@@ -77,12 +76,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ w
         const capital = s.totals.pool + s.totals.outstanding;
         return (
           <Link key={c.id} href={`/circles/${c.id}`} className="flex min-h-16 items-center gap-3 px-4 py-3 transition hover:bg-surface2">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-surface2 text-xl" aria-hidden="true">{circleEmoji(c.name)}</span>
+            <CircleIcon name={c.name} />
             <div className="min-w-0 flex-1">
               <div className="line-clamp-2 font-medium leading-tight">{c.name}</div>
               <div className="truncate text-xs text-muted">{c.memberCount} members · {c.role === "admin" ? "You admin" : c.city}</div>
             </div>
-            <Sparkline width={52} values={series} up={s.overdueCount === 0} />
+            <span className="lg:hidden"><Sparkline width={52} values={series} up={s.overdueCount === 0} /></span>
             <div className="w-24 text-right">
               <div className="num font-semibold">{formatINR(capital)}</div>
               {s.overdueCount > 0 ? <span className="text-xs font-semibold text-neg">{s.overdueCount} overdue</span> : <span className="text-xs text-muted">{s.onTimeRate === null ? "No repayments" : `${Math.round(s.onTimeRate)}% on time`}</span>}
@@ -96,13 +95,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ w
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="min-w-0">
-        <h1 className="mb-3 text-2xl font-bold tracking-tight md:text-3xl">{greeting(now)}, {user.name.split(" ")[0]} <span aria-hidden="true">👋</span></h1>
+        <h1 className="mb-3 text-2xl font-bold tracking-tight md:text-3xl">{greeting(now)}, {user.name.split(" ")[0]}</h1>
         {sp.welcome && <Notice tone="pos" title="You are verified and in." className="mb-4">Create a circle or ask a friend for an invite code to join one.</Notice>}
 
         <Card className="grad-hero glow relative overflow-hidden !border-0 md:p-6">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-sm font-medium text-white">My position 💫</h2>
+              <h2 className="text-sm font-medium text-white">My position</h2>
               <div className="mt-1 text-3xl font-semibold tracking-tight md:text-4xl">
                 {pos.net < 0 && "-"}<CountUp value={Math.abs(pos.net)} />
               </div>
@@ -123,7 +122,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ w
           {SHORTCUTS.map(({ href, icon: Icon, label, g }) => (
             <li key={href}>
               <Link href={href} className="lift flex min-h-[84px] flex-col items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-1 py-3 text-center text-xs font-medium transition hover:bg-surface2 active:scale-[0.98] md:flex-row md:justify-start md:gap-2.5 md:px-3 md:text-sm">
-                <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${g} text-white`}><Icon size={20} aria-hidden="true" /></span>
+                <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${g}`}><Icon size={20} aria-hidden="true" /></span>
                 {label}
               </Link>
             </li>
