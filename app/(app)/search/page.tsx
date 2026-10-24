@@ -6,6 +6,7 @@ import { myCircles, myLoans } from "@/lib/core/position";
 import { activeMemberIds } from "@/lib/core/shared";
 import { displayStatus } from "@/lib/core/loans";
 import { formatINR } from "@/lib/domain/money";
+import { SearchBox } from "@/components/client/search-box";
 import { Avatar, Card, EmptyState, PageHeader, SectionTitle } from "@/components/ui";
 import { StatusBadge, purposeLabel } from "@/components/loan-bits";
 
@@ -36,10 +37,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   return (
     <div>
       <PageHeader title="Search" />
-      <form action="/search" role="search" className="relative mb-5">
-        <Search size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
-        <input name="q" type="search" defaultValue={q} aria-label="Search circles, loans and people" placeholder="Search circles, loans, people" autoFocus className="min-h-12 w-full rounded-xl border border-line bg-surface pl-10 pr-3 focus-visible:border-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30 md:min-h-10" />
-      </form>
+      <div className="mb-5"><SearchBox variant="page" initial={q} /></div>
       {none && <EmptyState icon={<Search size={24} />} title="Nothing found" body="Try a circle name, a person, or a purpose like “education”." />}
       {cHits.length > 0 && (<><SectionTitle>Circles</SectionTitle><Card className="divide-y divide-line p-0 md:p-0">{cHits.map((c) => <Link key={c.id} href={`/circles/${c.id}`} className="flex min-h-14 items-center justify-between gap-3 px-4 hover:bg-surface2"><span className="font-medium">{c.name}</span><span className="text-xs text-muted">{c.memberCount} members · {c.city}</span></Link>)}</Card></>)}
       {lHits.length > 0 && (<><SectionTitle>Loans</SectionTitle><Card className="divide-y divide-line p-0 md:p-0">{lHits.map((l) => <Link key={l.loan.id} href={`/loans/${l.loan.id}`} className="flex min-h-14 items-center justify-between gap-3 px-4 py-2 hover:bg-surface2"><span><span className="font-medium">{l.mine ? "You" : l.borrowerName}</span><span className="block text-xs text-muted">{purposeLabel(l.loan.purpose)} · {l.circleName}</span></span><span className="flex items-center gap-2"><span className="num font-medium">{formatINR(l.loan.amount)}</span><StatusBadge status={displayStatus(l.loan, false)} /></span></Link>)}</Card></>)}

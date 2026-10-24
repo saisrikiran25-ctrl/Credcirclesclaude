@@ -221,3 +221,6 @@ h1, h2, h3, .font-display {
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .marquee { display: flex; width: max-content; animation: marquee 38s linear infinite; }
 .marquee:hover { animation-play-state: paused; }
+
+/* The search box draws its own clear button */
+input[type="search"]::-webkit-search-cancel-button { appearance: none; display: none; }

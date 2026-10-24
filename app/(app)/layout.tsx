@@ -3,6 +3,7 @@ import { Bell, Search } from "lucide-react";
 import { requireCtx } from "@/lib/session";
 import { APP_NAME } from "@/lib/config";
 import { unreadCount } from "@/lib/core/position";
+import { SearchBox } from "@/components/client/search-box";
 import { Wordmark } from "@/components/ui";
 import { BottomNav, TopNav } from "@/components/client/nav";
 import { UserMenu } from "@/components/client/user-menu";
@@ -19,10 +20,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <Link href="/home" aria-label={`${APP_NAME} home`} className="shrink-0"><Wordmark name={APP_NAME} size={28} /></Link>
           <TopNav />
           <div className="flex-1" />
-          <form action="/search" role="search" className="relative hidden w-64 md:block">
-            <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
-            <input name="q" type="search" aria-label="Search circles, loans and people" placeholder="Search circles, loans, people" className="h-9 w-full rounded-lg border border-transparent bg-surface2 pl-9 pr-3 text-sm placeholder:text-muted focus-visible:border-brand focus-visible:outline-none" />
-          </form>
+          <SearchBox />
           <Link href="/search" aria-label="Search" className="flex size-11 items-center justify-center rounded-full hover:bg-surface2 md:hidden"><Search size={20} aria-hidden="true" /></Link>
           <Link href="/notifications" className="relative flex size-11 items-center justify-center rounded-full hover:bg-surface2 md:size-9" aria-label={unread ? `Notifications, ${unread} unread` : "Notifications"}>
             <Bell size={20} aria-hidden="true" />

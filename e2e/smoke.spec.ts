@@ -118,3 +118,21 @@ test("new user: sign up with simulated eKYC, create a circle, get an invite code
   await expect(page.getByText("Invite code", { exact: true })).toBeVisible();
   expect(errs, errs.join("\n")).toEqual([]);
 });
+
+test("smart search suggests results as you type and supports the keyboard", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/login");
+  await page.getByRole("button", { name: /Student borrower/ }).first().click();
+  await page.waitForURL("**/home");
+  const box = page.getByRole("combobox", { name: /Search circles/ }).first();
+  await box.fill("gachbowli"); // deliberate typo
+  const opt = page.getByRole("option", { name: /Gachibowli Hostel Gang/ }).first();
+  await expect(opt).toBeVisible();
+  await box.press("ArrowDown");
+  await box.press("Enter");
+  await page.waitForURL(/\/circles\//);
+  await page.keyboard.press("/");
+  await expect(box).toBeFocused();
+  await box.fill("ledg");
+  await expect(page.getByRole("option", { name: /Ledger/ }).first()).toBeVisible();
+});
