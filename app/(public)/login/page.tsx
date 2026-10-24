@@ -15,12 +15,12 @@ export default async function LoginPage() {
   return (
     <>
       <ProtoRibbon />
-      <main id="main" className="mx-auto max-w-md px-5 py-8">
+      <main id="main" className="mx-auto max-w-md px-4 py-8">
         <Link href="/" aria-label={`${APP_NAME} home`}><Wordmark name={APP_NAME} /></Link>
         <div className="mt-8"><PageHeader title="Welcome back" subtitle="Log in with your mobile number." /></div>
         <Card><LoginForm /></Card>
         <Card className="mt-4">
-          <h2 className="font-display font-semibold">Or jump in as a demo person</h2>
+          <h2 className="font-semibold">Or jump in as a demo person</h2>
           <p className="mb-3 mt-1 text-sm text-muted">One tap, no OTP.</p>
           <PersonaButtons compact />
         </Card>

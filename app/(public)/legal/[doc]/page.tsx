@@ -35,7 +35,7 @@ export default async function Legal({ params }: { params: Promise<{ doc: string 
   return (
     <main id="main" className="mx-auto max-w-2xl px-5 pb-16 pt-6">
       <header className="mb-8"><Link href="/" aria-label={`${APP_NAME} home`}><Wordmark name={APP_NAME} size={28} /></Link></header>
-      <h1 className="font-display text-3xl font-bold">{d.title}</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">{d.title}</h1>
       <Notice tone="warn" className="my-5" title="Placeholder text">Not legal advice. Have a lawyer replace this before any real launch.</Notice>
       <ul className="list-disc space-y-3 pl-5 text-muted">{d.items.map((i) => <li key={i}>{i}</li>)}</ul>
     </main>

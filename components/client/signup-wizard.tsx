@@ -53,7 +53,7 @@ export function SignupWizard() {
 
       {step === 0 && (
         <Card>
-          <h1 className="font-display text-2xl font-semibold">Your mobile number</h1>
+          <h1 className="text-xl font-semibold">Your mobile number</h1>
           <p className="mb-4 mt-1 text-sm text-muted">We use it to log you in and to keep circles to verified people only.</p>
           <form
             className="space-y-4"
@@ -87,7 +87,7 @@ export function SignupWizard() {
 
       {step === 1 && (
         <Card>
-          <h1 className="font-display text-2xl font-semibold">Verify your identity</h1>
+          <h1 className="text-xl font-semibold">Verify your identity</h1>
           <p className="mb-4 mt-1 text-sm text-muted">Circles are verified-members only. This is a simulated eKYC step.</p>
           {kycToken ? (
             <div className="space-y-4">
@@ -146,7 +146,7 @@ export function SignupWizard() {
 
       {step === 2 && (
         <Card>
-          <h1 className="font-display text-2xl font-semibold">About you</h1>
+          <h1 className="text-xl font-semibold">About you</h1>
           <p className="mb-4 mt-1 text-sm text-muted">Circle members see your name and verified badge.</p>
           <form
             className="space-y-4"

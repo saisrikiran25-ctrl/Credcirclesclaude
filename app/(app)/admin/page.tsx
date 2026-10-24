@@ -23,7 +23,7 @@ export default async function PilotMetrics() {
         <StatTile label="Take rate" value={m.takeRate === null ? "n/a" : `${m.takeRate.toFixed(2)}%`} sub="Platform fees / loans facilitated" />
       </div>
       <Card className="mt-5">
-        <h2 className="mb-2 font-display text-lg font-semibold">Progress to the pilot target</h2>
+        <h2 className="mb-2 text-base font-semibold">Progress to the pilot target</h2>
         <ProgressBar value={m.activeCircles / PILOT_TARGET_CIRCLES.min} label="Active circles toward the lower pilot target" />
         <p className="mt-2 text-xs text-muted">{m.activeCircles} of {PILOT_TARGET_CIRCLES.min} circles (lower end of the 50 to 100 target). A circle counts as active with 3 or more members.</p>
       </Card>

@@ -23,23 +23,23 @@ export function StatusBadge({ status }: { status: DisplayStatus }) {
   return <Badge tone={s.tone}>{s.label}</Badge>;
 }
 
-export function LoanListItem({ href, borrowerName, circleName, amount, purpose, status, extra }: {
-  href: string; borrowerName: string; circleName: string; amount: number; purpose: string; status: DisplayStatus; extra?: React.ReactNode;
+export function LoanListItem({ href, borrowerName, circleName, amount, purpose, status, extra, bare }: {
+  bare?: boolean; href: string; borrowerName: string; circleName: string; amount: number; purpose: string; status: DisplayStatus; extra?: React.ReactNode;
 }) {
   return (
-    <Link href={href} className="flex min-h-[4.5rem] items-center gap-3 rounded-2xl border border-line bg-surface p-3.5 transition hover:border-brand">
-      <Avatar name={borrowerName} size={44} />
+    <Link href={href} className={bare ? "flex min-h-16 items-center gap-3 px-4 py-3 transition hover:bg-surface2" : "flex min-h-16 items-center gap-3 rounded-2xl border border-line bg-surface p-3.5 transition hover:bg-surface2"}>
+      <Avatar name={borrowerName} size={40} />
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <span className="truncate font-semibold">{borrowerName}</span>
+          <span className="truncate text-[15px] font-medium md:text-sm">{borrowerName}</span>
           <StatusBadge status={status} />
         </div>
         <div className="truncate text-sm text-muted">{purposeLabel(purpose)} · {circleName}</div>
         {extra && <div className="mt-0.5 text-xs text-muted">{extra}</div>}
       </div>
       <div className="text-right">
-        <div className="num font-display font-semibold">{formatINR(amount)}</div>
-        <ChevronRight size={18} className="ml-auto text-muted" aria-hidden="true" />
+        <div className="num font-semibold">{formatINR(amount)}</div>
+        <ChevronRight size={16} className="ml-auto text-muted" aria-hidden="true" />
       </div>
     </Link>
   );

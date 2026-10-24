@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { Bell } from "lucide-react";
+import { Bell, Search } from "lucide-react";
 import { requireCtx } from "@/lib/session";
 import { APP_NAME } from "@/lib/config";
 import { unreadCount } from "@/lib/core/position";
 import { Wordmark } from "@/components/ui";
-import { BottomNav, SideNav } from "@/components/client/nav";
+import { BottomNav, TopNav } from "@/components/client/nav";
 import { UserMenu } from "@/components/client/user-menu";
 import { ProtoRibbon } from "@/components/proto-ribbon";
 
@@ -14,22 +14,24 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-dvh">
       <ProtoRibbon />
-      <header className="no-print sticky top-0 z-30 border-b border-line bg-bg/90 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href="/home" aria-label={`${APP_NAME} home`}><Wordmark name={APP_NAME} size={30} /></Link>
-          <div className="flex items-center gap-1">
-            <Link href="/notifications" className="relative flex size-11 items-center justify-center rounded-full hover:bg-surface2" aria-label={unread ? `Notifications, ${unread} unread` : "Notifications"}>
-              <Bell size={21} aria-hidden="true" />
-              {unread > 0 && <span className="num absolute right-1 top-1 flex min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[11px] font-bold text-onaccent" aria-hidden="true">{unread > 9 ? "9+" : unread}</span>}
-            </Link>
-            <UserMenu name={user.name} />
-          </div>
+      <header className="no-print sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
+        <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4 md:gap-6">
+          <Link href="/home" aria-label={`${APP_NAME} home`} className="shrink-0"><Wordmark name={APP_NAME} size={28} /></Link>
+          <TopNav />
+          <div className="flex-1" />
+          <form action="/search" role="search" className="relative hidden w-64 md:block">
+            <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
+            <input name="q" type="search" aria-label="Search circles, loans and people" placeholder="Search circles, loans, people" className="h-9 w-full rounded-lg border border-transparent bg-surface2 pl-9 pr-3 text-sm placeholder:text-muted focus-visible:border-brand focus-visible:outline-none" />
+          </form>
+          <Link href="/search" aria-label="Search" className="flex size-11 items-center justify-center rounded-full hover:bg-surface2 md:hidden"><Search size={20} aria-hidden="true" /></Link>
+          <Link href="/notifications" className="relative flex size-11 items-center justify-center rounded-full hover:bg-surface2 md:size-9" aria-label={unread ? `Notifications, ${unread} unread` : "Notifications"}>
+            <Bell size={20} aria-hidden="true" />
+            {unread > 0 && <span className="num absolute right-0.5 top-0.5 flex min-w-[18px] items-center justify-center rounded-full bg-neg px-1 text-[10px] font-bold text-white md:right-0 md:top-0" aria-hidden="true">{unread > 9 ? "9+" : unread}</span>}
+          </Link>
+          <UserMenu name={user.name} />
         </div>
       </header>
-      <div className="mx-auto flex max-w-6xl gap-8 px-4 sm:px-6">
-        <aside className="no-print sticky top-24 hidden h-fit w-56 shrink-0 py-6 md:block"><SideNav /></aside>
-        <main id="main" className="min-w-0 flex-1 pb-28 pt-5 md:max-w-3xl md:pb-12 md:pt-6">{children}</main>
-      </div>
+      <main id="main" className="mx-auto max-w-6xl px-4 pb-28 pt-4 md:pb-14 md:pt-6">{children}</main>
       <BottomNav />
     </div>
   );

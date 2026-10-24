@@ -22,8 +22,8 @@ export default async function PositionPage() {
       <Card className="mb-5">
         <div className="flex flex-col items-center gap-5 sm:flex-row">
           <RingGauge size={170} thickness={20} ariaLabel={`Lent out ${formatINR(p.lentOutstanding)}, borrowed ${formatINR(p.borrowedOutstanding)}`}
-            segments={[{ value: p.lentOutstanding, color: "var(--brand)", label: "Lent" }, { value: p.borrowedOutstanding, color: "var(--accent)", label: "Borrowed" }]}
-            center={<div><div className="text-xs text-muted">Net</div><div className="num font-display text-xl font-bold">{formatINR(p.net)}</div></div>} />
+            segments={[{ value: p.lentOutstanding, color: "var(--green)", label: "Lent" }, { value: p.borrowedOutstanding, color: "var(--accent)", label: "Borrowed" }]}
+            center={<div><div className="text-xs text-muted">Net</div><div className="num text-xl font-semibold">{formatINR(p.net)}</div></div>} />
           <div className="grid w-full flex-1 grid-cols-2 gap-3">
             <StatTile label="Lent out now" value={formatINR(p.lentOutstanding)} sub={`${formatINR(p.totalLent)} lent in total`} />
             <StatTile label="Borrowed now" value={formatINR(p.borrowedOutstanding)} sub={`${formatINR(p.totalBorrowed)} borrowed in total`} />
@@ -31,7 +31,7 @@ export default async function PositionPage() {
             <StatTile label="Loss share" value={formatINR(p.lossShare)} tone={p.lossShare ? "neg" : undefined} sub="From defaults" />
           </div>
         </div>
-        <div className="mt-3 flex gap-4 text-xs text-muted"><span className="inline-flex items-center gap-1.5"><span className="size-3 rounded-full bg-brand" aria-hidden="true" /> Lent</span><span className="inline-flex items-center gap-1.5"><span className="size-3 rounded-full bg-accent" aria-hidden="true" /> Borrowed</span></div>
+        <div className="mt-3 flex gap-4 text-xs text-muted"><span className="inline-flex items-center gap-1.5"><span className="size-3 rounded-full bg-[var(--green)]" aria-hidden="true" /> Lent</span><span className="inline-flex items-center gap-1.5"><span className="size-3 rounded-full bg-accent" aria-hidden="true" /> Borrowed</span></div>
       </Card>
 
       <SectionTitle>Coming up</SectionTitle>

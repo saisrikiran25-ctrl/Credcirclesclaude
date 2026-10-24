@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 export function Field({ label, hint, error, children, htmlFor }: { label: string; hint?: ReactNode; error?: string; children: ReactNode; htmlFor?: string }) {
   return (
     <div className="space-y-1.5">
-      <label htmlFor={htmlFor} className="block text-sm font-semibold">{label}</label>
+      <label htmlFor={htmlFor} className="block text-sm font-medium text-fg">{label}</label>
       {children}
       {hint && !error && <p className="text-xs text-muted">{hint}</p>}
       {error && <p role="alert" className="text-xs font-medium text-neg">{error}</p>}
@@ -14,7 +14,7 @@ export function Field({ label, hint, error, children, htmlFor }: { label: string
   );
 }
 
-const control = "min-h-12 w-full rounded-2xl border border-line bg-surface px-4 text-[15px] text-fg placeholder:text-muted/70 focus-visible:border-brand disabled:opacity-60";
+const control = "min-h-12 w-full rounded-xl border border-line bg-surface px-3.5 text-fg placeholder:text-muted/70 transition focus-visible:border-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30 disabled:opacity-60 md:min-h-10";
 
 export function TextInput({ label, hint, error, className, ...rest }: { label: string; hint?: ReactNode; error?: string } & InputHTMLAttributes<HTMLInputElement>) {
   const id = useId();
@@ -40,8 +40,8 @@ export function RupeeInput({ label, value, onChange, hint, error, min, max, step
   return (
     <Field label={label} hint={hint} error={error} htmlFor={id}>
       <div className="relative">
-        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 font-semibold text-muted" aria-hidden="true">₹</span>
-        <input id={id} inputMode="numeric" type="number" min={min} max={max} step={step} value={value} onChange={(e) => onChange(e.target.value)} aria-invalid={!!error} className={cn(control, "num pl-9", error && "border-neg")} />
+        <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 font-medium text-muted" aria-hidden="true">₹</span>
+        <input id={id} inputMode="numeric" type="number" min={min} max={max} step={step} value={value} onChange={(e) => onChange(e.target.value)} aria-invalid={!!error} className={cn(control, "num pl-8", error && "border-neg")} />
       </div>
     </Field>
   );
@@ -50,7 +50,7 @@ export function RupeeInput({ label, value, onChange, hint, error, min, max, step
 export function Chips<T extends string>({ label, value, onChange, options }: { label: string; value: T; onChange: (v: T) => void; options: { id: T; label: string }[] }) {
   return (
     <fieldset className="space-y-1.5">
-      <legend className="text-sm font-semibold">{label}</legend>
+      <legend className="text-sm font-medium">{label}</legend>
       <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={label}>
         {options.map((o) => (
           <button
@@ -59,7 +59,7 @@ export function Chips<T extends string>({ label, value, onChange, options }: { l
             role="radio"
             aria-checked={value === o.id}
             onClick={() => onChange(o.id)}
-            className={cn("min-h-11 rounded-full border px-4 text-sm font-semibold transition", value === o.id ? "border-brand bg-brand text-onbrand" : "border-line bg-surface hover:bg-surface2")}
+            className={cn("min-h-11 rounded-full border px-4 text-sm font-medium transition md:min-h-9", value === o.id ? "border-brand bg-brandsoft text-brand" : "border-line bg-surface hover:bg-surface2")}
           >
             {o.label}
           </button>

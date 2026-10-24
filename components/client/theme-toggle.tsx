@@ -21,7 +21,7 @@ export function ThemeToggle() {
     { m: "system", label: "Auto", icon: SunMoon }, { m: "light", label: "Light", icon: Sun }, { m: "dark", label: "Dark", icon: Moon },
   ];
   return (
-    <div role="radiogroup" aria-label="Colour theme" className="inline-flex rounded-full bg-surface2 p-1">
+    <div role="radiogroup" aria-label="Colour theme" className="inline-flex rounded-xl bg-surface2 p-1">
       {opts.map(({ m, label, icon: Icon }) => (
         <button
           key={m}
@@ -29,7 +29,7 @@ export function ThemeToggle() {
           role="radio"
           aria-checked={mode === m}
           onClick={() => apply(m)}
-          className={cn("flex min-h-11 items-center gap-1.5 rounded-full px-4 text-sm font-semibold", mode === m ? "bg-surface text-fg shadow-sm" : "text-muted")}
+          className={cn("flex min-h-10 items-center gap-1.5 rounded-lg px-3.5 text-sm font-medium", mode === m ? "bg-surface text-fg shadow-sm ring-1 ring-line" : "text-muted")}
         >
           <Icon size={16} aria-hidden="true" /> {label}
         </button>

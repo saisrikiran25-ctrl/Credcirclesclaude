@@ -51,10 +51,10 @@ export default async function Learn({ params }: { params: Promise<{ topic: strin
   if (!t) notFound();
   return (
     <main id="main" className="mx-auto max-w-2xl px-5 pb-16 pt-6">
-      <header className="mb-8 flex items-center justify-between"><Link href="/" aria-label={`${APP_NAME} home`}><Wordmark name={APP_NAME} size={28} /></Link><Link href="/signup" className="inline-flex min-h-11 items-center rounded-full bg-brand px-4 text-sm font-semibold text-onbrand">Get started</Link></header>
-      <h1 className="font-display text-4xl font-bold">{t.title}</h1>
+      <header className="mb-8 flex items-center justify-between"><Link href="/" aria-label={`${APP_NAME} home`}><Wordmark name={APP_NAME} size={28} /></Link><Link href="/signup" className="inline-flex min-h-11 items-center rounded-xl bg-brand px-4 text-sm font-semibold text-onbrand">Get started</Link></header>
+      <h1 className="text-4xl font-semibold tracking-tight">{t.title}</h1>
       <p className="mt-2 text-lg text-muted">{t.lead}</p>
-      <div className="mt-8 space-y-6">{t.sections.map((s) => <section key={s.h}><h2 className="font-display text-xl font-semibold">{s.h}</h2><p className="mt-1 text-muted">{s.p}</p></section>)}</div>
+      <div className="mt-8 space-y-6">{t.sections.map((s) => <section key={s.h}><h2 className="text-xl font-semibold">{s.h}</h2><p className="mt-1 text-muted">{s.p}</p></section>)}</div>
       <nav aria-label="More explainers" className="mt-10 flex flex-wrap gap-2">{Object.entries(TOPICS).filter(([k]) => k !== topic).map(([k, v]) => <LinkButton key={k} href={`/learn/${k}`} variant="ghost" size="sm">{v.title}</LinkButton>)}</nav>
     </main>
   );

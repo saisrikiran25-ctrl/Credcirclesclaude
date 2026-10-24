@@ -1,13 +1,14 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ChevronLeft, Info, TriangleAlert, CircleCheck, ShieldAlert } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info, TriangleAlert, CircleCheck, ShieldAlert } from "lucide-react";
 import { avatarColors, cn, initials } from "@/lib/utils";
+import { formatINR } from "@/lib/domain/money";
 
 /* ---------- surfaces ---------- */
 
 export function Card({ className, children, as: As = "div", ...rest }: { className?: string; children: ReactNode; as?: "div" | "section" | "article" } & React.HTMLAttributes<HTMLElement>) {
   return (
-    <As className={cn("rounded-3xl border border-line bg-surface p-5", className)} {...rest}>
+    <As className={cn("rounded-2xl border border-line bg-surface p-4 md:p-5", className)} {...rest}>
       {children}
     </As>
   );
@@ -15,10 +16,19 @@ export function Card({ className, children, as: As = "div", ...rest }: { classNa
 
 export function SectionTitle({ children, action }: { children: ReactNode; action?: ReactNode }) {
   return (
-    <div className="mb-3 mt-7 flex items-end justify-between gap-3 first:mt-0">
-      <h2 className="font-display text-lg font-semibold">{children}</h2>
+    <div className="mb-2.5 mt-7 flex items-center justify-between gap-3 first:mt-0">
+      <h2 className="text-base font-semibold tracking-tight md:text-[15px]">{children}</h2>
       {action}
     </div>
+  );
+}
+
+/** Small "see all" style text link used in section headers. */
+export function SeeAll({ href, children = "See all" }: { href: string; children?: ReactNode }) {
+  return (
+    <Link href={href} className="inline-flex min-h-11 items-center gap-0.5 text-sm font-semibold text-brand hover:underline md:min-h-8">
+      {children} <ChevronRight size={16} aria-hidden="true" />
+    </Link>
   );
 }
 
@@ -31,12 +41,12 @@ const TONES: Record<Tone, string> = {
   pos: "bg-possoft text-pos",
   warn: "bg-warnsoft text-warn",
   neg: "bg-negsoft text-neg",
-  accent: "bg-accent text-onaccent",
+  accent: "bg-accentsoft text-accent",
 };
 
 /** Colour never carries meaning alone: every badge has text (and optionally an icon). */
 export function Badge({ tone = "neutral", children, className }: { tone?: Tone; children: ReactNode; className?: string }) {
-  return <span className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold leading-none", TONES[tone], className)}>{children}</span>;
+  return <span className={cn("inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold leading-none", TONES[tone], className)}>{children}</span>;
 }
 
 export function Avatar({ name, size = 40, className }: { name: string; size?: number; className?: string }) {
@@ -44,7 +54,7 @@ export function Avatar({ name, size = 40, className }: { name: string; size?: nu
   return (
     <span
       aria-hidden="true"
-      className={cn("inline-flex shrink-0 items-center justify-center rounded-full font-bold", className)}
+      className={cn("inline-flex shrink-0 items-center justify-center rounded-full font-semibold", className)}
       style={{ width: size, height: size, background: bg, color: fg, fontSize: size * 0.38 }}
     >
       {initials(name)}
@@ -56,37 +66,123 @@ export function ProgressBar({ value, label, tone = "brand", marker }: { value: n
   const pct = Math.round(Math.min(Math.max(value, 0), 1) * 100);
   const fill = { brand: "bg-brand", pos: "bg-pos", warn: "bg-warn", neg: "bg-neg" }[tone];
   return (
-    <div role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} className="relative h-3 w-full overflow-hidden rounded-full bg-surface2">
+    <div role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} className="relative h-2 w-full overflow-hidden rounded-full bg-surface2">
       <div className={cn("h-full rounded-full transition-[width] duration-700", fill)} style={{ width: `${pct}%` }} />
-      {marker !== undefined && <div className="absolute inset-y-0 w-0.5 bg-fg/60" style={{ left: `${Math.min(marker * 100, 100)}%` }} />}
+      {marker !== undefined && <div className="absolute inset-y-0 w-0.5 bg-fg/50" style={{ left: `${Math.min(marker * 100, 100)}%` }} />}
     </div>
   );
 }
 
-/* ---------- stats and headers ---------- */
+/* ---------- numbers: gain/loss, stats, key-value ---------- */
+
+/** Gain/loss chip: arrow + amount (+ percent). The arrow and sign make it readable without colour. */
+export function Delta({ paise, pct, className, zeroLabel }: { paise?: number; pct?: number | null; className?: string; zeroLabel?: string }) {
+  const v = paise ?? pct ?? 0;
+  if (v === 0 && zeroLabel) return <span className={cn("text-sm text-muted", className)}>{zeroLabel}</span>;
+  const up = v >= 0;
+  return (
+    <span className={cn("num inline-flex items-center gap-1 text-sm font-semibold", up ? "text-pos" : "text-neg", className)}>
+      <span aria-hidden="true" className="text-[9px] leading-none">{up ? "▲" : "▼"}</span>
+      <span className="sr-only">{up ? "Up " : "Down "}</span>
+      {paise !== undefined && formatINR(Math.abs(paise), { showPaise: true })}
+      {pct !== undefined && pct !== null && <span className={paise !== undefined ? "font-medium" : ""}>{paise !== undefined ? ` (${Math.abs(pct).toFixed(1)}%)` : `${Math.abs(pct).toFixed(1)}%`}</span>}
+    </span>
+  );
+}
 
 export function StatTile({ label, value, sub, tone }: { label: string; value: ReactNode; sub?: ReactNode; tone?: "pos" | "neg" | "warn" }) {
   const color = tone === "pos" ? "text-pos" : tone === "neg" ? "text-neg" : tone === "warn" ? "text-warn" : "text-fg";
   return (
-    <div className="rounded-2xl bg-surface2 p-4">
+    <div className="rounded-xl border border-line bg-surface p-3.5">
       <div className="text-xs font-medium text-muted">{label}</div>
-      <div className={cn("num mt-1 font-display text-xl font-semibold", color)}>{value}</div>
+      <div className={cn("num mt-1 text-lg font-semibold tracking-tight md:text-[17px]", color)}>{value}</div>
       {sub && <div className="mt-0.5 text-xs text-muted">{sub}</div>}
     </div>
   );
 }
 
+/** Zerodha-style statement rows: label left, figure right, hairlines between. */
+export function KeyValue({ rows, className }: { rows: { k: ReactNode; v: ReactNode }[]; className?: string }) {
+  return (
+    <dl className={cn("divide-y divide-line", className)}>
+      {rows.map((r, i) => (
+        <div key={i} className="flex items-baseline justify-between gap-4 py-2.5 text-sm">
+          <dt className="text-muted">{r.k}</dt>
+          <dd className="num text-right font-medium">{r.v}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/** Tiny trend line for list rows. Pure SVG, no client JS. */
+export function Sparkline({ values, width = 64, height = 24, up }: { values: number[]; width?: number; height?: number; up?: boolean }) {
+  if (values.length < 2) return <span style={{ width }} className="inline-block" aria-hidden="true" />;
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = max - min || 1;
+  const pts = values.map((v, i) => `${((i / (values.length - 1)) * (width - 2) + 1).toFixed(1)},${(height - 2 - ((v - min) / span) * (height - 4)).toFixed(1)}`).join(" ");
+  const rising = up ?? values[values.length - 1] >= values[0];
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden="true" className="shrink-0">
+      <polyline points={pts} fill="none" stroke={rising ? "var(--green)" : "var(--red)"} strokeWidth="1.75" strokeLinejoin="round" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/* ---------- tabs (underline, like a stock page) ---------- */
+
+export function Tabs({ items, label }: { items: { href: string; label: string; active: boolean }[]; label: string }) {
+  return (
+    <nav aria-label={label} className="hide-scrollbar -mx-4 mb-4 overflow-x-auto border-b border-line px-4 md:mx-0 md:px-0">
+      <ul className="flex gap-6">
+        {items.map((t) => (
+          <li key={t.href}>
+            <Link
+              href={t.href}
+              aria-current={t.active ? "page" : undefined}
+              className={cn("inline-flex min-h-11 items-center whitespace-nowrap border-b-2 text-sm font-semibold transition", t.active ? "border-brand text-brand" : "border-transparent text-muted hover:text-fg")}
+            >
+              {t.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+/** Pill-shaped filter chips (Groww "All / Stocks / Funds" row). */
+export function ChipLinks({ items, label }: { items: { href: string; label: string; active: boolean }[]; label: string }) {
+  return (
+    <nav aria-label={label} className="hide-scrollbar -mx-4 mb-3 overflow-x-auto px-4 md:mx-0 md:px-0">
+      <ul className="flex gap-2">
+        {items.map((c) => (
+          <li key={c.href}>
+            <Link href={c.href} aria-current={c.active ? "page" : undefined}
+              className={cn("inline-flex min-h-10 items-center whitespace-nowrap rounded-full border px-4 text-sm font-medium transition", c.active ? "border-brand bg-brandsoft text-brand" : "border-line bg-surface text-fg hover:bg-surface2")}>
+              {c.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+/* ---------- headers, empty and notice states ---------- */
+
 export function PageHeader({ title, subtitle, back, action }: { title: ReactNode; subtitle?: ReactNode; back?: string; action?: ReactNode }) {
   return (
-    <header className="mb-5">
+    <header className="mb-4 md:mb-5">
       {back && (
-        <Link href={back} className="mb-2 inline-flex min-h-11 items-center gap-1 text-sm font-medium text-muted hover:text-fg">
+        <Link href={back} className="-ml-2 mb-1 inline-flex min-h-11 items-center gap-0.5 rounded-lg px-2 text-sm font-medium text-muted hover:text-fg md:min-h-9">
           <ChevronLeft size={18} aria-hidden="true" /> Back
         </Link>
       )}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="font-display text-2xl font-semibold leading-tight sm:text-3xl">{title}</h1>
+          <h1 className="text-xl font-semibold leading-tight tracking-tight md:text-2xl">{title}</h1>
           {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
         </div>
         {action}
@@ -97,9 +193,9 @@ export function PageHeader({ title, subtitle, back, action }: { title: ReactNode
 
 export function EmptyState({ icon, title, body, action }: { icon: ReactNode; title: string; body: string; action?: ReactNode }) {
   return (
-    <div className="flex flex-col items-center rounded-3xl border border-dashed border-line px-6 py-10 text-center">
+    <div className="flex flex-col items-center rounded-2xl border border-dashed border-line px-6 py-10 text-center">
       <div className="mb-3 flex size-14 items-center justify-center rounded-full bg-brandsoft text-brand" aria-hidden="true">{icon}</div>
-      <h3 className="font-display text-lg font-semibold">{title}</h3>
+      <h3 className="text-base font-semibold">{title}</h3>
       <p className="mt-1 max-w-sm text-sm text-muted">{body}</p>
       {action && <div className="mt-4">{action}</div>}
     </div>
@@ -107,18 +203,18 @@ export function EmptyState({ icon, title, body, action }: { icon: ReactNode; tit
 }
 
 const NOTICE = {
-  info: { cls: "bg-brandsoft text-fg", icon: Info, color: "text-brand" },
-  warn: { cls: "bg-warnsoft text-fg", icon: TriangleAlert, color: "text-warn" },
-  neg: { cls: "bg-negsoft text-fg", icon: ShieldAlert, color: "text-neg" },
-  pos: { cls: "bg-possoft text-fg", icon: CircleCheck, color: "text-pos" },
+  info: { cls: "bg-accentsoft", icon: Info, color: "text-accent" },
+  warn: { cls: "bg-warnsoft", icon: TriangleAlert, color: "text-warn" },
+  neg: { cls: "bg-negsoft", icon: ShieldAlert, color: "text-neg" },
+  pos: { cls: "bg-possoft", icon: CircleCheck, color: "text-pos" },
 } as const;
 
 export function Notice({ tone = "info", title, children, className }: { tone?: keyof typeof NOTICE; title?: string; children?: ReactNode; className?: string }) {
   const N = NOTICE[tone];
   const Icon = N.icon;
   return (
-    <div role={tone === "neg" || tone === "warn" ? "alert" : "note"} className={cn("flex gap-3 rounded-2xl p-4 text-sm", N.cls, className)}>
-      <Icon size={20} className={cn("mt-0.5 shrink-0", N.color)} aria-hidden="true" />
+    <div role={tone === "neg" || tone === "warn" ? "alert" : "note"} className={cn("flex gap-3 rounded-xl p-3.5 text-sm", N.cls, className)}>
+      <Icon size={18} className={cn("mt-0.5 shrink-0", N.color)} aria-hidden="true" />
       <div className="min-w-0">
         {title && <div className="font-semibold">{title}</div>}
         {children && <div className={cn(title && "mt-0.5", "text-muted [&_strong]:text-fg")}>{children}</div>}
@@ -130,17 +226,17 @@ export function Notice({ tone = "info", title, children, className }: { tone?: k
 /* ---------- buttons ---------- */
 
 const BTN = {
-  primary: "bg-brand text-onbrand hover:opacity-90",
+  primary: "bg-brand text-onbrand hover:brightness-95",
   accent: "bg-accent text-onaccent hover:brightness-95",
   soft: "bg-brandsoft text-brand hover:brightness-95",
   ghost: "border border-line bg-surface text-fg hover:bg-surface2",
-  danger: "bg-neg text-white hover:opacity-90",
+  danger: "bg-neg text-white hover:brightness-95",
 } as const;
 export type BtnVariant = keyof typeof BTN;
 export const btnClass = (variant: BtnVariant = "primary", size: "md" | "lg" | "sm" = "md", full = false) =>
   cn(
-    "inline-flex select-none items-center justify-center gap-2 rounded-full font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50",
-    size === "lg" ? "min-h-14 px-7 text-base" : size === "sm" ? "min-h-11 px-4 text-sm" : "min-h-12 px-5 text-[15px]",
+    "inline-flex select-none items-center justify-center gap-2 rounded-xl font-semibold transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50",
+    size === "lg" ? "min-h-12 px-6 text-base md:min-h-11 md:text-[15px]" : size === "sm" ? "min-h-11 px-4 text-sm md:min-h-9" : "min-h-12 px-5 text-[15px] md:min-h-10 md:text-sm",
     BTN[variant],
     full && "w-full",
   );
@@ -158,26 +254,23 @@ export function LinkButton({ href, children, variant = "primary", size = "md", f
 export function LogoMark({ size = 32 }: { size?: number }) {
   const dots = Array.from({ length: 6 }, (_, i) => {
     const a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
-    return { x: 50 + 27 * Math.cos(a), y: 50 + 27 * Math.sin(a), accent: i === 0 };
+    return { x: 50 + 28 * Math.cos(a), y: 50 + 28 * Math.sin(a) };
   });
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" role="img" aria-label="Circlo logo">
       <rect width="100" height="100" rx="24" fill="var(--brand)" />
-      <circle cx="50" cy="50" r="27" fill="none" stroke="var(--onbrand)" strokeOpacity="0.3" strokeWidth="2.6" />
-      {dots.map((d, i) => (
-        <circle key={i} cx={d.x} cy={d.y} r={d.accent ? 7.5 : 6} fill={d.accent ? "var(--accent)" : "var(--onbrand)"} />
-      ))}
-      <circle cx="50" cy="50" r="11" fill="var(--accent)" />
-      <circle cx="50" cy="50" r="5.5" fill="none" stroke="var(--brand)" strokeWidth="2" />
+      <circle cx="50" cy="50" r="28" fill="none" stroke="var(--onbrand)" strokeOpacity="0.35" strokeWidth="3" />
+      {dots.map((d, i) => <circle key={i} cx={d.x} cy={d.y} r={i === 0 ? 8 : 6} fill="var(--onbrand)" />)}
+      <circle cx="50" cy="50" r="10" fill="var(--onbrand)" />
     </svg>
   );
 }
 
 export function Wordmark({ name, size = 32 }: { name: string; size?: number }) {
   return (
-    <span className="inline-flex items-center gap-2.5">
+    <span className="inline-flex items-center gap-2">
       <LogoMark size={size} />
-      <span className="font-display text-xl font-bold tracking-tight">{name}</span>
+      <span className="text-lg font-bold tracking-tight">{name}</span>
     </span>
   );
 }

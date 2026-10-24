@@ -27,12 +27,12 @@ export default async function RiskPage({ searchParams }: { searchParams: Promise
         {r.score === null ? (
           <><RiskBadge band={null} score={null} /><p className="mt-3 text-sm text-muted">There is not enough history yet (no repayments and under 30 days on the platform). Members will see “Not enough history”, not a low score.</p></>
         ) : (
-          <><div className="num font-display text-6xl font-bold">{r.score}<span className="text-2xl text-muted">/100</span></div><div className="mt-2"><RiskBadge band={r.band} score={r.score} /></div></>
+          <><div className="num text-6xl font-semibold tracking-tight">{r.score}<span className="text-2xl text-muted">/100</span></div><div className="mt-2"><RiskBadge band={r.band} score={r.score} /></div></>
         )}
         {r.cap && <Notice tone="warn" title={`Score capped at ${r.cap.limit}`} className="mt-4 text-left">{r.cap.reason}</Notice>}
       </Card>
       <Card>
-        <h2 className="mb-3 font-display text-lg font-semibold">What counts</h2>
+        <h2 className="mb-3 text-base font-semibold">What counts</h2>
         <ul className="space-y-4">{r.factors.map((f) => (
           <li key={f.key}>
             <div className="flex items-baseline justify-between text-sm"><span className="font-semibold">{f.label}</span><span className="num">{f.points} / {f.max}</span></div>

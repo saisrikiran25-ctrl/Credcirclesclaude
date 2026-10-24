@@ -23,11 +23,11 @@ export function LedgerRow({ r }: { r: LedgerRowData }) {
   const Icon = m.icon;
   const failed = r.status === "failed";
   return (
-    <li className="flex items-center gap-3 py-3">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface2" aria-hidden="true"><Icon size={18} /></span>
+    <li className="flex items-center gap-3 py-3 md:py-2.5">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface2 text-muted" aria-hidden="true"><Icon size={18} /></span>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-x-2">
-          <span className="font-semibold">{m.label}</span>
+          <span className="text-[15px] font-medium md:text-sm">{m.label}</span>
           {failed && <Badge tone="neg">Failed</Badge>}
           {r.status === "pending" && <Badge tone="warn">Pending</Badge>}
         </div>
@@ -35,7 +35,7 @@ export function LedgerRow({ r }: { r: LedgerRowData }) {
         {r.memo && <div className="truncate text-xs text-muted">{r.memo}</div>}
         <div className="num text-[11px] text-muted">{r.ref}</div>
       </div>
-      <div className={`num text-right font-display font-semibold ${failed ? "text-muted line-through" : m.sign > 0 ? "text-pos" : ""}`}>
+      <div className={`num text-right font-semibold ${failed ? "text-muted line-through" : m.sign > 0 ? "text-pos" : ""}`}>
         {m.sign > 0 ? "+" : m.sign < 0 ? "-" : ""}{formatINR(r.amount, { showPaise: true })}
       </div>
     </li>

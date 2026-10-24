@@ -46,3 +46,8 @@ Repayment 35 · time on platform 15 · past approvals 15 · current exposure 20 
 ## Hosting on Vercel
 - **Stateless signed login cookie** (`<userId>.<HMAC>`) replaces the sessions table, so a login keeps working across several serverless instances.
 - **Database seeded at build time** and copied to `/tmp` on first use on Vercel. Runtime changes are per instance and temporary. A hosted database is the real fix.
+
+## UI/UX overhaul: Groww/Kite-style
+- Mobile: bottom 5-tab bar, position hero card, shortcut tiles, watchlist-style rows with sparklines, sticky bottom CTA on circle pages.
+- Desktop: top nav with search, dense tables (circles, ledger), right-hand sticky action/summary panels, two-column layouts.
+- Palette: green brand, blue accent, hairline dividers, tabular numerals, ▲▼ delta chips; light and dark themes, text/fill pairs chosen for WCAG AA.

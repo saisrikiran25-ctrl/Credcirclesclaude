@@ -32,7 +32,7 @@ export function PersonaButtons({ compact }: { compact?: boolean }) {
               else if (!r.ok) show(r.error, "error");
             });
           }}
-          className="flex min-h-16 items-center gap-3 rounded-2xl border border-line bg-surface p-4 text-left transition hover:border-brand hover:bg-brandsoft active:scale-[0.99] disabled:opacity-60"
+          className="flex min-h-16 items-center gap-3 rounded-xl border border-line bg-surface p-3.5 text-left transition hover:border-brand hover:bg-brandsoft active:scale-[0.99] disabled:opacity-60"
         >
           <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brandsoft text-brand">
             {pending && which === key ? <Loader2 size={20} className="animate-spin" aria-hidden="true" /> : <Icon size={20} aria-hidden="true" />}

@@ -5,7 +5,7 @@ import { schema } from "@/lib/db";
 import { myLoans } from "@/lib/core/position";
 import { displayStatus } from "@/lib/core/loans";
 import { instalmentStatus } from "@/lib/domain/emi";
-import { EmptyState, LinkButton, PageHeader, SectionTitle } from "@/components/ui";
+import { Card, EmptyState, LinkButton, PageHeader, SectionTitle } from "@/components/ui";
 import { LoanListItem } from "@/components/loan-bits";
 
 export const metadata = { title: "Lend / Borrow" };
@@ -22,12 +22,12 @@ export default async function LoansPage() {
   const section = (title: string, list: typeof rows) => list.length > 0 && (
     <>
       <SectionTitle>{title}</SectionTitle>
-      <div className="space-y-3">{list.map((r) => <LoanListItem key={r.loan.id} href={`/loans/${r.loan.id}`} borrowerName={r.mine ? "You" : r.borrowerName} circleName={r.circleName} amount={r.loan.amount} purpose={r.loan.purpose} status={r.status} />)}</div>
+      <Card className="divide-y divide-line p-0 md:p-0">{list.map((r) => <LoanListItem bare key={r.loan.id} href={`/loans/${r.loan.id}`} borrowerName={r.mine ? "You" : r.borrowerName} circleName={r.circleName} amount={r.loan.amount} purpose={r.loan.purpose} status={r.status} />)}</Card>
     </>
   );
   return (
     <div>
-      <PageHeader title="Lend and borrow" subtitle="Loans between members of your circles." action={<LinkButton href="/loans/new" size="sm">Request</LinkButton>} />
+      <PageHeader title="Loans" subtitle="Lend to and borrow from members of your circles." action={<LinkButton href="/loans/new" size="sm">Request</LinkButton>} />
       {rows.length === 0 ? <EmptyState icon={<HandCoins size={26} />} title="No loans yet" body="Request a loan from a circle you are in, or vote on a friend's request." action={<LinkButton href="/loans/new">Request a loan</LinkButton>} /> : (
         <>
           {section("Your borrowing", mine)}
